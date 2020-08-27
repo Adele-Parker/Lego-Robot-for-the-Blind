@@ -1,0 +1,243 @@
+let cPower = 0
+let bPower = 0
+function turnRight90() {
+    brick.showImage(images.eyesMiddleRight)
+    motors.largeBC.tank(30, 0, 1.6, MoveUnit.Rotations)
+    motors.largeBC.tank(0, -30, 1.6, MoveUnit.Rotations)
+}
+// these numbers will need checking when setting up
+// first is black value +&- 4 second is blue value +&-
+// 4 third is white value +&- 4
+function findBlackFBlue() {
+    while (!(sensors.color3.light(LightIntensityMode.Reflected) >= 2 && sensors.color3.light(LightIntensityMode.Reflected) <= 10)) {
+        brick.showString("while not black", 2)
+        if (sensors.color3.light(LightIntensityMode.Reflected) >= 11 && sensors.color3.light(LightIntensityMode.Reflected) <= 19) {
+            brick.showImage(images.expressionsSmile)
+            bPower = 15
+            cPower = 15
+            motors.largeBC.tank(bPower, cPower)
+        } else if (sensors.color3.light(LightIntensityMode.Reflected) >= 81 && sensors.color3.light(LightIntensityMode.Reflected) <= 89) {
+            brick.showImage(images.expressionsSad)
+            bPower = -15
+            cPower = -15
+            motors.largeBC.tank(bPower, cPower, 0.7, MoveUnit.Rotations)
+            bPower = 15
+            cPower = -15
+            motors.largeBC.tank(bPower, cPower, 0.25, MoveUnit.Rotations)
+        } else {
+            brick.showString("Unexpected colour", 2)
+            brick.showString("detected", 3)
+        }
+    }
+    brick.showImage(images.expressionsBigSmile)
+}
+function dropObject() {
+    brick.showImage(images.expressionsBigSmile)
+    motors.mediumA.run(-25, 3, MoveUnit.Seconds)
+    motors.largeBC.tank(-25, -25, 1, MoveUnit.Rotations)
+    resetGrabber()
+}
+function turnLeft90() {
+    brick.showImage(images.eyesMiddleLeft)
+    motors.largeBC.tank(0, 30, 1.7, MoveUnit.Rotations)
+    motors.largeBC.tank(-30, 0, 1.7, MoveUnit.Rotations)
+}
+// these numbers for the reflected light values will
+// need checking when setting up first is wider ranger
+// +&- 4 of the read value secong is the read value
+// third is +&- 2 of the read value
+function stopOnBlue() {
+    if (sensors.color3.light(LightIntensityMode.Reflected) > 9 && sensors.color3.light(LightIntensityMode.Reflected) < 17) {
+        brick.showImage(images.informationQuestionMark)
+        bPower = 15
+        cPower = 15
+        motors.largeBC.tank(bPower, cPower, 0.1, MoveUnit.Rotations)
+        if (sensors.color3.light(LightIntensityMode.Reflected) == 15) {
+            brick.showImage(images.expressionsSmile)
+            bPower = 15
+            cPower = -15
+            motors.largeBC.tank(bPower, cPower, 0.1, MoveUnit.Rotations)
+            motors.stopAll()
+            control.waitMicros(1000000)
+            if (sensors.color3.light(LightIntensityMode.Reflected) >= 15 && sensors.color3.light(LightIntensityMode.Reflected) <= 17) {
+                brick.showImage(images.expressionsBigSmile)
+                motors.stopAll()
+                control.waitMicros(2000000)
+                brick.exitProgram()
+            }
+            brick.clearScreen()
+        }
+    }
+}
+function _180RightTurn() {
+    brick.showImage(images.eyesMiddleRight)
+    motors.largeBC.tank(25, -25, 3, MoveUnit.Rotations)
+    motors.largeBC.tank(-25, -25, 0.3, MoveUnit.Rotations)
+}
+function followTheLine() {
+    brick.showImage(images.expressionsSmile)
+    bPower = 15 + (27 - sensors.color3.light(LightIntensityMode.Reflected)) * 1.5
+    cPower = 15 + (sensors.color3.light(LightIntensityMode.Reflected) - 27) * 1.5
+    motors.largeBC.tank(bPower, cPower)
+}
+function resetGrabber() {
+    brick.showImage(images.eyesAwake)
+    motors.mediumA.run(25, 3, MoveUnit.Seconds)
+    motors.mediumA.run(25, -1.3, MoveUnit.Rotations)
+    brick.clearScreen()
+}
+// these numbers for the reflected light values will
+// need checking when setting up first is black value
+// +&- 4 second is red value +&- 4 third is white
+// value +&- 4
+function findBlackFRed() {
+    while (!(sensors.color3.light(LightIntensityMode.Reflected) >= 2 && sensors.color3.light(LightIntensityMode.Reflected) <= 10)) {
+        brick.showString("while not black", 1)
+        if (sensors.color3.light(LightIntensityMode.Reflected) >= 70 && sensors.color3.light(LightIntensityMode.Reflected) <= 78) {
+            brick.showImage(images.expressionsSmile)
+            bPower = 15
+            cPower = 15
+            motors.largeBC.tank(bPower, cPower)
+        } else if (sensors.color3.light(LightIntensityMode.Reflected) >= 81 && sensors.color3.light(LightIntensityMode.Reflected) <= 89) {
+            brick.showImage(images.expressionsSad)
+            bPower = -15
+            cPower = -15
+            motors.largeBC.tank(bPower, cPower, 0.7, MoveUnit.Rotations)
+            bPower = 15
+            cPower = -15
+            motors.largeBC.tank(bPower, cPower, 0.25, MoveUnit.Rotations)
+        } else {
+            brick.showString("Unexpected colour", 3)
+            brick.showString("detected", 4)
+        }
+    }
+    brick.showImage(images.expressionsBigSmile)
+}
+function removeObjectLeft() {
+    brick.showImage(images.expressionsSmile)
+    turnLeft90()
+    motors.largeBC.tank(25, 25, 5, MoveUnit.Rotations)
+    dropObject()
+    _180RightTurn()
+    motors.largeBC.tank(25, 25, 3, MoveUnit.Rotations)
+    turnLeft90()
+}
+function removeObjectRight() {
+    brick.showImage(images.expressionsSmile)
+    turnRight90()
+    motors.largeBC.tank(25, 25, 5, MoveUnit.Rotations)
+    dropObject()
+    _180RightTurn()
+    motors.largeBC.tank(25, 25, 3, MoveUnit.Rotations)
+    turnRight90()
+}
+function pickUpObject() {
+    brick.showImage(images.expressionsSick)
+    motors.mediumA.run(25, -0.5, MoveUnit.Rotations)
+    bPower = 5
+    cPower = 5
+    motors.largeBC.tank(bPower, cPower, 0.35, MoveUnit.Rotations)
+    motors.mediumA.run(25, 0.47, MoveUnit.Rotations)
+}
+// needs 3 checks to ensure it stops on red and only
+// red. only one or two checks and false stops kept
+// happening.
+//
+// first check is wider as it is meant to activate
+// when the sensor is over black and ed, then it goes
+// forward to see if its still in red, reflected 74 on
+// test, then it turns, moving the sensor once again,
+// to ensure it is still on red.
+//
+// these numbers for the reflected light values will
+// need checking when setting up first is wider ranger
+// +&- 4 of the read value secong is the read value
+// third is +&- 2 of the read value
+function stopOnRed() {
+    if (sensors.color3.light(LightIntensityMode.Reflected) > 70 && sensors.color3.light(LightIntensityMode.Reflected) < 80) {
+        brick.showImage(images.informationQuestionMark)
+        bPower = 15
+        cPower = 15
+        motors.largeBC.tank(bPower, cPower, 0.1, MoveUnit.Rotations)
+        if (sensors.color3.light(LightIntensityMode.Reflected) == 74) {
+            brick.showImage(images.expressionsSmile)
+            bPower = 15
+            cPower = -15
+            motors.largeBC.tank(bPower, cPower, 0.1, MoveUnit.Rotations)
+            motors.stopAll()
+            control.waitMicros(1000000)
+            if (sensors.color3.light(LightIntensityMode.Reflected) >= 72 && sensors.color3.light(LightIntensityMode.Reflected) <= 76) {
+                brick.showImage(images.expressionsBigSmile)
+                motors.stopAll()
+                control.waitMicros(2000000)
+                brick.exitProgram()
+            }
+            brick.clearScreen()
+        }
+    }
+}
+brick.showImage(images.expressionsBigSmile)
+resetGrabber()
+brick.showValue("reflected", sensors.color3.light(LightIntensityMode.Reflected), 1)
+while (true) {
+    // if robot starts on red or blue - this changes which
+    // direction it will remove the object and tells it to
+    // stop when it reaches the other colour this is red
+    // value +&- 4
+    if (sensors.color3.light(LightIntensityMode.Reflected) >= 70 && sensors.color3.light(LightIntensityMode.Reflected) <= 78) {
+        brick.showString("Start on Red", 1)
+        brick.showValue("reflected", sensors.color3.light(LightIntensityMode.Reflected), 1)
+        findBlackFRed()
+        brick.clearScreen()
+        bPower = 15
+        cPower = 15
+        motors.largeBC.tank(bPower, cPower, 0.5, MoveUnit.Rotations)
+        while (true) {
+            brick.showValue("object", sensors.ultrasonic1.distance(), 4)
+            brick.showValue("reflected", sensors.color3.light(LightIntensityMode.Reflected), 1)
+            if (sensors.ultrasonic1.distance() < 12 && sensors.ultrasonic1.distance() > 8) {
+                pickUpObject()
+                removeObjectRight()
+            } else {
+                followTheLine()
+                stopOnBlue()
+            }
+        }
+    } else if (sensors.color3.light(LightIntensityMode.Reflected) >= 11 && sensors.color3.light(LightIntensityMode.Reflected) <= 19) {
+        brick.showString("Start on Blue", 1)
+        // this is blue value +&- 4
+        //
+        // goes forwards - if it sees white it reverses, turns
+        // a bit and tries again until it sees black. When it
+        // sees black it moves on.
+        findBlackFBlue()
+        brick.clearScreen()
+        bPower = 15
+        cPower = 15
+        motors.largeBC.tank(bPower, cPower, 0.5, MoveUnit.Rotations)
+        // will continue to loop through this until it reaches
+        // the end of the line and the program turns off. this
+        // is so it continues to follow the line and re assess
+        // objects distance
+        while (true) {
+            brick.showValue("object", sensors.ultrasonic1.distance(), 4)
+            // it has to get quite close to objects to try pick
+            // them up- so it doesn't try to pick up walls ect.
+            // the lower value is 8 as that is the distance of the
+            // object in the grabber, so it does try to pick up
+            // things it already has.
+            if (sensors.ultrasonic1.distance() < 12 && sensors.ultrasonic1.distance() > 8) {
+                pickUpObject()
+                removeObjectLeft()
+            } else {
+                followTheLine()
+                stopOnRed()
+            }
+        }
+    } else {
+        brick.showString("other colour", 1)
+    }
+}
+forever(function () {
+	
+})
